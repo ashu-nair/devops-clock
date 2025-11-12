@@ -1,0 +1,18 @@
+body {
+    background: #111;
+    color: #0f0;
+    font-family: Consolas, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.clock-container {
+    text-align: center;
+}
+
+#clock {
+    font-size: 60px;
+    margin-top: 10px;
+}

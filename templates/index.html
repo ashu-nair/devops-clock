@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Digital Clock</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="clock-container">
+        <h1>Digital Clock</h1>
+        <div id="clock">Loading...</div>
+    </div>
+
+    <script>
+        function updateClock() {
+            fetch("/time")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("clock").innerText = data.time;
+                });
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+    </script>
+</body>
+</html>

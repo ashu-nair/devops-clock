@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clock-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clock-app
+  template:
+    metadata:
+      labels:
+        app: clock-app
+    spec:
+      containers:
+      - name: clock-container
+        image: your_dockerhub_username/flask-clock:latest
+        ports:
+        - containerPort: 5000
