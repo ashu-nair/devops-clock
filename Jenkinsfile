@@ -2,32 +2,29 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_USER = "your_dockerhub_username"
+        DOCKERHUB_USER = "ashunairr"
         IMAGE_NAME = "flask-clock"
     }
 
     stages {
-        stage('Clone') {
+
+        stage('Checkout') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'pip install -r requirements.txt'
-            }
-        }
-
-        stage('Docker Build') {
+        stage('Build Docker Image') {
             steps {
                 sh 'docker build -t $DOCKERHUB_USER/$IMAGE_NAME:$BUILD_NUMBER .'
             }
         }
 
-        stage('Docker Login') {
+        stage('Login to Docker Hub') {
             steps {
-                sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+                withCredentials([string(credentialsId: 'dockerhub_pass', variable: 'DOCKERHUB_PASS')]) {
+                    sh 'echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin'
+                }
             }
         }
 
@@ -39,7 +36,10 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh 'kubectl set image deployment/clock-deploy clock-container=$DOCKERHUB_USER/$IMAGE_NAME:$BUILD_NUMBER'
+                sh '''
+                kubectl set image deployment/clock-deploy \
+                clock-container=$DOCKERHUB_USER/$IMAGE_NAME:$BUILD_NUMBER --record
+                '''
             }
         }
     }
